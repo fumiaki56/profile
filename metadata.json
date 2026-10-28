@@ -1,0 +1,8 @@
+{
+  "name": "Interview Portfolio & Skill Radar",
+  "description": "転職・採用面接で面接官に画面共有するための自己紹介・スキル可視化ポートフォリオ。マルチロール切替、Chart.jsレーダーチャート、STAR法実績カード、単一HTMLエクスポートを搭載。",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

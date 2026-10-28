@@ -1,0 +1,586 @@
+import { ProfileData } from '../types/portfolio';
+
+export function generateStandaloneHtml(profile: ProfileData): string {
+  const radarLabels = JSON.stringify(profile.radar.labels);
+  const radarValues = JSON.stringify(profile.radar.values);
+
+  return `<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${profile.name} - ${profile.title}</title>
+  <meta name="description" content="${profile.catchphrase}">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; letter-spacing: -0.01em; }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+  </style>
+</head>
+<body class="bg-[#fafaf9] text-stone-900 dark:bg-[#161615] dark:text-stone-100 min-h-screen transition-colors duration-200">
+
+  <!-- Top Navigation with Page Switcher -->
+  <header class="sticky top-0 z-40 bg-[#fafaf9]/90 dark:bg-[#161615]/90 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800/80">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      <a href="#hero" class="text-base font-semibold tracking-tight text-stone-900 dark:text-stone-100 whitespace-nowrap shrink-0 flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 dark:bg-emerald-500"></span>
+        <span>${profile.name}</span>
+        <span class="text-xs font-normal text-stone-400 dark:text-stone-500 hidden sm:inline">/ Portfolio</span>
+      </a>
+
+      <!-- Page Switcher Tabs: 職歴と主な取り組み (左), スキル・強み (右) -->
+      <nav class="flex items-center p-1 rounded-xl bg-stone-200/70 dark:bg-stone-900 border border-stone-300/60 dark:border-stone-800 text-xs font-medium">
+        <button id="nav-btn-experience" onclick="switchPage('experience')" class="px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-stone-800 text-emerald-800 dark:text-emerald-300 font-bold shadow-xs">
+          職歴と主な取り組み
+        </button>
+        <button id="nav-btn-skills" onclick="switchPage('skills')" class="px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200">
+          スキル・強み
+        </button>
+      </nav>
+
+      <div class="flex items-center gap-2.5 shrink-0">
+        <button onclick="window.print()" class="px-3 py-1.5 text-xs font-medium rounded-xl border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-3.5 h-3.5 text-stone-500"></i>
+          <span class="hidden sm:inline">印刷 / PDF</span>
+        </button>
+        <button onclick="toggleDarkMode()" class="p-2 text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white rounded-xl hover:bg-stone-100 dark:hover:bg-stone-900 transition-colors" title="テーマ切り替え">
+          <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+          <i data-lucide="sun" class="w-4 h-4 hidden dark:inline"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-10 space-y-10">
+
+    <!-- 1. Hero Section (ファーストビュー・職歴ページで表示) -->
+    <section id="hero" class="pt-4 pb-6 border-b border-stone-200/80 dark:border-stone-800/80">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="lg:col-span-8 space-y-4">
+          <div class="flex items-center gap-3 text-xs font-medium text-stone-500 dark:text-stone-400">
+            <span class="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-semibold">
+              <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+              <span>実務経験 約${profile.experienceYears}年</span>
+            </span>
+            <span aria-hidden="true">·</span>
+            <span>私立大学 経済学部卒</span>
+            <span aria-hidden="true">·</span>
+            <span>オンライン面接・自己紹介用</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-stone-900 dark:text-stone-100 leading-tight">
+            ${profile.name}
+          </h1>
+
+          <p class="text-base sm:text-lg font-medium text-emerald-800 dark:text-emerald-400">
+            ${profile.title}
+          </p>
+
+          <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-sm sm:text-base max-w-2xl">
+            ${profile.catchphrase}
+          </p>
+
+          <!-- Keywords -->
+          <div class="pt-1 flex flex-wrap items-center gap-2 text-xs font-medium text-stone-600 dark:text-stone-300">
+            <span class="text-stone-400 dark:text-stone-500">大切にしているキーワード :</span>
+            ${profile.keywords.map(kw => `<span class="text-stone-800 dark:text-stone-200 font-semibold"># ${kw}</span>`).join('<span class="text-stone-300 dark:text-stone-700">/</span>')}
+          </div>
+
+          <!-- Links -->
+          <div class="pt-3 flex flex-wrap items-center gap-2.5 text-xs sm:text-sm">
+            ${profile.links.blog ? `<a href="${profile.links.blog}" target="_blank" rel="noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-white/70 dark:bg-stone-900/60 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"><i data-lucide="book-open" class="w-3.5 h-3.5 text-emerald-600"></i><span>ブログ (${profile.links.blog.replace('https://', '')})</span></a>` : ''}
+            ${profile.links.email ? `<a href="mailto:${profile.links.email}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-white/70 dark:bg-stone-900/60 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors font-mono text-xs"><i data-lucide="mail" class="w-3.5 h-3.5 text-stone-400"></i><span>${profile.links.email}</span></a>` : ''}
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-stone-600 dark:text-stone-400 bg-stone-100/70 dark:bg-stone-900/40 border border-stone-200/80 dark:border-stone-800 rounded-xl">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-stone-500"></i>
+              <span>保有資格: 危険物取扱者 乙4 / 三陸特</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 30-Second Overview Card -->
+        <div class="lg:col-span-4 bg-white/80 dark:bg-stone-900/70 border border-stone-200/90 dark:border-stone-800/90 rounded-2xl p-5 space-y-3 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-stone-600 dark:text-stone-400">はじめに / 私の強み</span>
+            <span class="text-[11px] font-mono text-emerald-700 dark:text-emerald-400 font-semibold">Overview</span>
+          </div>
+          <p class="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
+            国内大手製薬メーカー（東証プライム上場）での約15年間の経理事務を通じて培った「数字を扱う上での正確性」と、現職（大手電機メーカー系 総合ビル管理企業）で見積積算を担当しながら<strong>生成AI（Gemini）を活用してWebアプリプロトタイプを作成・上長へ改善提案した実行力</strong>が私の特徴です。
+          </p>
+          <div class="pt-2.5 border-t border-stone-100 dark:border-stone-800 text-xs text-stone-500 dark:text-stone-400">
+            大切にしている姿勢 : 堅実な実務 × 自発的な工夫
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page: 職歴と主な取り組み (ExperienceSection) -->
+    <section id="page-experience" class="space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <div>
+          <span class="text-xs font-semibold tracking-wider text-emerald-700 dark:text-emerald-400">Career &amp; Works</span>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mt-0.5">職歴と主な取り組み</h2>
+        </div>
+        <span class="text-xs text-stone-500 dark:text-stone-400">実務経験の変遷と、各社で工夫・実践してきた内容</span>
+      </div>
+
+      <div class="relative border-l-2 border-stone-200 dark:border-stone-800 ml-3 sm:ml-4 space-y-8 pl-6 sm:pl-8">
+        <!-- 1. 大手電機メーカー系 総合ビル管理・ファシリティ企業 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-[#fafaf9] dark:border-[#161615] bg-emerald-600 ring-4 ring-emerald-500/20"></div>
+          
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+              <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>2025年10月 - 現在 (現職 / 約1年)</span>
+              </span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span class="font-bold text-stone-800 dark:text-stone-200 text-sm">大手電機メーカー系 総合ビル管理・ファシリティ企業</span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span>支店 業務課</span>
+              <span class="px-2 py-0.5 text-[11px] font-semibold bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 rounded-full border border-emerald-300/60 dark:border-emerald-800">現職</span>
+            </div>
+
+            <div class="text-xs font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-1.5 pt-0.5">
+              <i data-lucide="briefcase" class="w-3.5 h-3.5 text-stone-400"></i>
+              <span>担当業務 : 業務課 担当</span>
+            </div>
+
+            <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed pt-0.5">
+              昇降機の修理・保守工事に関する見積積算、営業支援、発注依頼書のデータ入力（施工日・施工条件など）、動静表の確認などを担当。
+            </p>
+          </div>
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-3 shadow-xs">
+            <div class="flex items-center gap-2 text-xs font-bold text-stone-900 dark:text-stone-100">
+              <i data-lucide="sparkles" class="w-4 h-4 text-emerald-700 dark:text-emerald-400"></i>
+              <span>見積作成業務の工程分析と、生成AIによるWebアプリプロトタイプ作成・改善提案</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-stone-700 dark:text-stone-300 block">きっかけ・現場の課題</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  昇降機の修理・保守工事の見積作成において、材料単価や外注費の検索、作業時間や取替調整費の計算、積算システムへの入力確認などに多くの時間と確認の負荷がかかっていました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-400 block">工夫したアプローチ</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  日々の見積支援を正確に行いながら作業工程を分析。生成AI（Gemini）を活用して、必要な情報を集約して計算補助を行うWebアプリのプロトタイプを自ら作成しました。社内の確認・承認手順を踏まえた上で、改善案として上長へ提案しました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/60 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-300 block">得られた変化と結果</span>
+                <p class="text-stone-700 dark:text-stone-200 leading-relaxed text-[11px]">
+                  アイデアにとどまらず「実際に操作できるプロトタイプ画面」として具体化したことで、見積作成の効率化イメージを上長と明確に共有でき、現場発の改善推進の第一歩となりました。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 大手総合リース企業 -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-[#fafaf9] dark:border-[#161615] bg-stone-400 dark:bg-stone-600"></div>
+          
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+              <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>約2年半</span>
+              </span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span class="font-bold text-stone-800 dark:text-stone-200 text-sm">大手総合リース企業</span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span>広報・IR担当</span>
+            </div>
+
+            <div class="text-xs font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-1.5 pt-0.5">
+              <i data-lucide="briefcase" class="w-3.5 h-3.5 text-stone-400"></i>
+              <span>担当業務 : 広報・IR担当</span>
+            </div>
+
+            <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed pt-0.5">
+              プレスリリース配信関連業務、新聞・Webメディア掲載情報の収集・クリッピング、コーポレートサイトの情報更新、広報効果測定、マイバッグ利用促進などの環境施策発信を担当。
+            </p>
+          </div>
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-3 shadow-xs">
+            <div class="flex items-center gap-2 text-xs font-bold text-stone-900 dark:text-stone-100">
+              <i data-lucide="sparkles" class="w-4 h-4 text-emerald-700 dark:text-emerald-400"></i>
+              <span>タイムリーな情報発信とコーポレートサイトの迅速な情報更新</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-stone-700 dark:text-stone-300 block">きっかけ・現場の課題</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  企業のステークホルダーに向けて、適切なタイミングで最新の企業情報や環境配慮への取り組みを正確に届ける必要がありました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-400 block">工夫したアプローチ</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  日々のメディア掲載情報を注意深く収集・整理して社内へ共有。Webサイトの更新を迅速に行い、環境配慮施策（マイバッグ利用促進など）の情報発信にも携わりました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/60 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-300 block">得られた変化と結果</span>
+                <p class="text-stone-700 dark:text-stone-200 leading-relaxed text-[11px]">
+                  社内外をつなぐ窓口として情報発信を支え、迅速なサイト更新とステークホルダーとの信頼関係構築に貢献しました。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 社会課題解決型ベンチャー企業（就労支援・Web事業） -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-[#fafaf9] dark:border-[#161615] bg-stone-400 dark:bg-stone-600"></div>
+          
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+              <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>約1年半</span>
+              </span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span class="font-bold text-stone-800 dark:text-stone-200 text-sm">社会課題解決型ベンチャー企業（就労支援・Web事業）</span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span>Web制作担当</span>
+            </div>
+
+            <div class="text-xs font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-1.5 pt-0.5">
+              <i data-lucide="briefcase" class="w-3.5 h-3.5 text-stone-400"></i>
+              <span>担当業務 : Web制作・デザイン業務</span>
+            </div>
+
+            <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed pt-0.5">
+              Web制作・デザイン関連業務およびPhotoshopを使用した画像加工・デザイン補助業務に従事。
+            </p>
+          </div>
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-3 shadow-xs">
+            <div class="flex items-center gap-2 text-xs font-bold text-stone-900 dark:text-stone-100">
+              <i data-lucide="sparkles" class="w-4 h-4 text-emerald-700 dark:text-emerald-400"></i>
+              <span>Photoshopによる画像加工とWebコンテンツ制作支援</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-stone-700 dark:text-stone-300 block">きっかけ・現場の課題</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  Webコンテンツや画像素材において、見る人に心地よく伝わる視覚的なレイアウトや画像加工が求められていました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-400 block">工夫したアプローチ</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  指定されたレギュレーションに沿って、写真の切り抜きや色調補正、バナー作成を行い、清潔感のある制作を心がけました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/60 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-300 block">得られた変化と結果</span>
+                <p class="text-stone-700 dark:text-stone-200 leading-relaxed text-[11px]">
+                  視覚的な情報整理の基礎とWeb制作の実務感覚を身につけ、その後のコーポレートサイト運用や現在のAIプロトタイプ作成の土台となりました。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 国内大手製薬メーカー（東証プライム上場） -->
+        <div class="relative space-y-3">
+          <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-[#fafaf9] dark:border-[#161615] bg-stone-400 dark:bg-stone-600"></div>
+          
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+              <span class="inline-flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
+                <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                <span>約15年間</span>
+              </span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span class="font-bold text-stone-800 dark:text-stone-200 text-sm">国内大手製薬メーカー（東証プライム上場）</span>
+              <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+              <span>経理部</span>
+            </div>
+
+            <div class="text-xs font-semibold text-stone-700 dark:text-stone-300 flex items-center gap-1.5 pt-0.5">
+              <i data-lucide="briefcase" class="w-3.5 h-3.5 text-stone-400"></i>
+              <span>担当業務 : 経理事務担当</span>
+            </div>
+
+            <p class="text-xs text-stone-600 dark:text-stone-300 leading-relaxed pt-0.5">
+              請求書処理、伝票入力、経理関連の事務処理を担当。金額や取引情報を扱う定型業務を長期間にわたりミスなく正確に遂行。
+            </p>
+          </div>
+
+          <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-3 shadow-xs">
+            <div class="flex items-center gap-2 text-xs font-bold text-stone-900 dark:text-stone-100">
+              <i data-lucide="sparkles" class="w-4 h-4 text-emerald-700 dark:text-emerald-400"></i>
+              <span>約15年間にわたる経理事務（請求書処理・伝票入力と正確な確認の徹底）</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-stone-700 dark:text-stone-300 block">きっかけ・現場の課題</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  日々の請求書処理や伝票入力では、金額の誤りや取引情報の不整合が許されないため、常に慎重かつ確実な処理が求められる環境でした。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/40 border border-stone-200/70 dark:border-stone-800 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-400 block">工夫したアプローチ</span>
+                <p class="text-stone-600 dark:text-stone-300 leading-relaxed text-[11px]">
+                  チェック手順を一つひとつ遵守し、取引内容と金額の照合を丁寧に行いました。少しでも疑問がある場合は関係者と落ち着いて確認を取り、ミスの未然防止に努めました。
+                </p>
+              </div>
+
+              <div class="p-3 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/60 space-y-1">
+                <span class="font-bold text-emerald-800 dark:text-emerald-300 block">得られた変化と結果</span>
+                <p class="text-stone-700 dark:text-stone-200 leading-relaxed text-[11px]">
+                  約15年の長きにわたり、安定して正確に業務を遂行。「数字を安心して任せられる」という誠実な信頼を築くことができました。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. 学歴 -->
+        <div class="relative space-y-1">
+          <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3.5 h-3.5 rounded-full border-2 border-[#fafaf9] dark:border-[#161615] bg-stone-400 dark:bg-stone-600"></div>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-stone-400">
+            <span class="font-semibold text-emerald-700 dark:text-emerald-400">卒業</span>
+            <span aria-hidden="true" class="text-stone-300 dark:text-stone-700">·</span>
+            <span class="font-bold text-stone-800 dark:text-stone-200 text-sm">私立大学 経済学部 経済学科</span>
+          </div>
+          <p class="text-xs text-stone-600 dark:text-stone-300">
+            経済学の基礎およびビジネス教養を修得。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Page: スキル・強み (SkillsSection) - completely isolated from 職歴と主な取り組み -->
+    <section id="page-skills" class="space-y-5 hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+        <div>
+          <span class="text-xs font-semibold tracking-wider text-emerald-700 dark:text-emerald-400">Skills &amp; Capabilities</span>
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 dark:text-stone-100 mt-0.5">スキル・強み</h2>
+        </div>
+        <span class="text-xs text-stone-500 dark:text-stone-400">実務処理能力と、AI活用・保有資格の体系</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div class="lg:col-span-5 bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between shadow-xs">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-stone-900 dark:text-stone-100">スキル総合バランス</h3>
+              <span class="text-xs text-stone-400">レーダーチャート</span>
+            </div>
+            <div class="relative w-full aspect-square max-h-[320px] mx-auto flex items-center justify-center">
+              <canvas id="standaloneRadarChart"></canvas>
+            </div>
+          </div>
+          <p class="text-xs text-stone-500 dark:text-stone-400 text-center mt-3 pt-3 border-t border-stone-100 dark:border-stone-800/80">
+            正確な事務処理力と、自発的な改善推進力のバランスを可視化しています。
+          </p>
+        </div>
+
+        <div class="lg:col-span-7 bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xs">
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-700"></i>
+              <h4 class="text-xs font-bold text-stone-900 dark:text-stone-100">実務・事務処理スキル</h4>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              ${profile.skills.ready.map(s => `
+                <div class="p-3 rounded-xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-950/40">
+                  <div class="font-semibold text-stone-900 dark:text-stone-100">${s.name}</div>
+                  <div class="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">${s.note || ''}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="wrench" class="w-4 h-4 text-stone-500"></i>
+              <h4 class="text-xs font-bold text-stone-900 dark:text-stone-100">デジタル・Web・業務改善スキル</h4>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              ${profile.skills.experienced.map(s => `
+                <div class="p-3 rounded-xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-950/40">
+                  <div class="font-semibold text-stone-900 dark:text-stone-100">${s.name}</div>
+                  <div class="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">${s.note || ''}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="award" class="w-4 h-4 text-emerald-700"></i>
+              <h4 class="text-xs font-bold text-stone-900 dark:text-stone-100">AI活用・保有資格</h4>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              ${profile.skills.learning.map(s => `
+                <div class="p-3 rounded-xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-950/40">
+                  <div class="font-semibold text-stone-900 dark:text-stone-100">${s.name}</div>
+                  <div class="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-snug">${s.note || ''}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="mt-16 border-t border-stone-200/80 dark:border-stone-800 py-8 text-center text-xs text-stone-500 dark:text-stone-400">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>${profile.title} - Portfolio &amp; Profile</div>
+      <div>Designed for clean presentation &amp; screen sharing</div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      updateChartTheme();
+    }
+
+    let currentTab = 'experience';
+    function switchPage(tab) {
+      currentTab = tab;
+      const hero = document.getElementById('hero');
+      const pageExp = document.getElementById('page-experience');
+      const pageSkills = document.getElementById('page-skills');
+
+      const navExp = document.getElementById('nav-btn-experience');
+      const navSkills = document.getElementById('nav-btn-skills');
+
+      const activeNavClasses = ['bg-white', 'dark:bg-stone-800', 'text-emerald-800', 'dark:text-emerald-300', 'font-bold', 'shadow-xs'];
+      const inactiveNavClasses = ['text-stone-600', 'dark:text-stone-400'];
+
+      if (tab === 'experience') {
+        if (hero) hero.classList.remove('hidden');
+        pageExp.classList.remove('hidden');
+        pageSkills.classList.add('hidden');
+
+        navExp.classList.add(...activeNavClasses);
+        navExp.classList.remove(...inactiveNavClasses);
+        navSkills.classList.remove(...activeNavClasses);
+        navSkills.classList.add(...inactiveNavClasses);
+      } else {
+        if (hero) hero.classList.add('hidden');
+        pageExp.classList.add('hidden');
+        pageSkills.classList.remove('hidden');
+
+        navSkills.classList.add(...activeNavClasses);
+        navSkills.classList.remove(...inactiveNavClasses);
+        navExp.classList.remove(...activeNavClasses);
+        navExp.classList.add(...inactiveNavClasses);
+
+        // re-render radar chart when made visible
+        if (!radarChartInstance) {
+          initRadarChart();
+        }
+      }
+    }
+
+    let radarChartInstance = null;
+    function initRadarChart() {
+      const ctx = document.getElementById('standaloneRadarChart');
+      if (!ctx) return;
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#d6d3d1' : '#44403c';
+      const gridColor = isDark ? 'rgba(214, 211, 209, 0.12)' : 'rgba(120, 113, 108, 0.18)';
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ${radarLabels},
+          datasets: [{
+            label: 'スキル総合評価',
+            data: ${radarValues},
+            backgroundColor: 'rgba(46, 125, 90, 0.22)',
+            borderColor: '#2e7d5a',
+            borderWidth: 2,
+            pointBackgroundColor: '#2e7d5a',
+            pointRadius: 4,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            r: {
+              angleLines: { color: gridColor },
+              grid: { color: gridColor },
+              pointLabels: {
+                color: textColor,
+                font: { family: 'Plus Jakarta Sans', size: 11, weight: 600 }
+              },
+              ticks: { display: false, stepSize: 20 },
+              suggestedMin: 50,
+              suggestedMax: 100
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function updateChartTheme() {
+      if (!radarChartInstance) return;
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#d6d3d1' : '#44403c';
+      const gridColor = isDark ? 'rgba(214, 211, 209, 0.12)' : 'rgba(120, 113, 108, 0.18)';
+      radarChartInstance.options.scales.r.pointLabels.color = textColor;
+      radarChartInstance.options.scales.r.grid.color = gridColor;
+      radarChartInstance.options.scales.r.angleLines.color = gridColor;
+      radarChartInstance.update();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash === '#skills') {
+        switchPage('skills');
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
