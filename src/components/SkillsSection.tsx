@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Chart, RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
-import { CheckCircle2, Award, Wrench } from 'lucide-react';
+import { CheckCircle2, Award, Wrench, Sparkles } from 'lucide-react';
 import { ProfileData } from '../types/portfolio';
 
 // Register Chart.js components
@@ -9,12 +9,14 @@ Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Fi
 interface SkillsSectionProps {
   radar: ProfileData['radar'];
   skills: ProfileData['skills'];
+  strengths?: ProfileData['strengths'];
   isDark: boolean;
 }
 
 export const SkillsSection: React.FC<SkillsSectionProps> = ({
   radar,
   skills,
+  strengths,
   isDark,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -103,7 +105,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
   }, [radar, isDark]);
 
   return (
-    <section id="skills" className="space-y-5">
+    <section id="skills" className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
         <div>
           <span className="text-xs font-semibold tracking-wider text-emerald-700 dark:text-emerald-400">
@@ -114,7 +116,7 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
           </h2>
         </div>
         <span className="text-xs text-stone-500 dark:text-stone-400">
-          実務処理能力と、AI活用・保有資格の体系
+          経理・支店業務支援・広報・Web制作・広告運用と保有資格の体系
         </span>
       </div>
 
@@ -135,18 +137,18 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
           </div>
 
           <p className="text-xs text-stone-500 dark:text-stone-400 text-center mt-3 pt-3 border-t border-stone-100 dark:border-stone-800/80">
-            正確な事務処理力と、自発的な改善推進力のバランスを可視化しています。
+            正確な事務処理力と、デジタル活用・改善推進力のバランスを可視化しています。
           </p>
         </div>
 
         {/* Right: Pure Skills without Career duplication */}
         <div className="lg:col-span-7 bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xs">
-          {/* Category 1: 業務推進・事務処理スキル */}
+          {/* Category 1: 業務推進・事務処理・広報スキル */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
               <h4 className="text-xs font-bold text-stone-900 dark:text-stone-100">
-                実務・事務処理スキル
+                実務・事務処理・広報スキル
               </h4>
             </div>
 
@@ -169,12 +171,12 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
             </div>
           </div>
 
-          {/* Category 2: デジタル・Web・業務改善スキル */}
+          {/* Category 2: Web制作・デジタルマーケ・ツール */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-1.5">
               <Wrench className="w-4 h-4 text-stone-500" />
               <h4 className="text-xs font-bold text-stone-900 dark:text-stone-100">
-                デジタル・Web・業務改善スキル
+                Web制作・デジタルマーケティング・ツール
               </h4>
             </div>
 
@@ -197,12 +199,12 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
             </div>
           </div>
 
-          {/* Category 3: AI活用・保有資格 */}
+          {/* Category 3: 保有資格 */}
           <div className="space-y-2.5">
             <div className="flex items-center gap-1.5">
               <Award className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
               <h4 className="text-xs font-bold text-stone-900 dark:text-stone-100">
-                AI活用・保有資格
+                保有資格
               </h4>
             </div>
 
@@ -226,6 +228,37 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Strengths / Self-PR 4 Pillars */}
+      {strengths && strengths.length > 0 && (
+        <div className="bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+              <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                強み・仕事で大切にしている4つの軸
+              </h3>
+            </div>
+            <span className="text-[11px] font-mono text-stone-400">Core Strengths</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            {strengths.map((item) => (
+              <div
+                key={item.title}
+                className="p-3.5 rounded-xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-950/40 space-y-1.5"
+              >
+                <div className="font-bold text-stone-900 dark:text-stone-100">
+                  {item.title}
+                </div>
+                <p className="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 };

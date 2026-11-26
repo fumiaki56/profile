@@ -75,8 +75,10 @@ export const Hero: React.FC<HeroProps> = ({ profile }) => {
               </a>
             )}
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-stone-600 dark:text-stone-400 bg-stone-100/70 dark:bg-stone-900/40 border border-stone-200/80 dark:border-stone-800 rounded-xl">
-              <Award className="w-3.5 h-3.5 text-stone-500" />
-              <span>保有資格: 危険物取扱者 乙4 / 三陸特</span>
+              <Award className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+              <span>
+                保有資格: {profile.qualificationsSummary || '日商簿記2級 / 英検2級 / 危険物取扱者 乙4'}
+              </span>
             </span>
           </div>
         </div>
@@ -93,11 +95,11 @@ export const Hero: React.FC<HeroProps> = ({ profile }) => {
           </div>
 
           <p className="text-xs sm:text-sm text-stone-700 dark:text-stone-300 leading-relaxed">
-            国内大手製薬メーカー（東証プライム上場）での約15年間の経理事務を通じて培った「数字を扱う上での正確性」と、現職（大手電機メーカー系 総合ビル管理企業）で見積積算を担当しながら<strong>生成AI（Gemini）を活用してWebアプリプロトタイプを作成・上長へ改善提案した実行力</strong>が私の特徴です。
+            大手製薬メーカーでの約15年の経理実務で磨いた「正確な事務処理力」を基盤に、Web制作・EC広告運用・広報IRと幅広い分野を経験してきた適応力が強みです。現職では昇降機の修理・保守工事に関する<strong>見積書作成や発注データの入力などの支店業務支援</strong>を担当しています。
           </p>
 
           <div className="pt-2.5 border-t border-stone-100 dark:border-stone-800 text-xs text-stone-500 dark:text-stone-400 flex items-center justify-between">
-            <span>大切にしている姿勢 : 堅実な実務 × 自発的な工夫</span>
+            <span>大切にしている姿勢 : 堅実な実務 × 丁寧な確認と継続的な学び</span>
           </div>
         </div>
       </div>

@@ -29,13 +29,29 @@ export interface SkillStackGroup {
   learning: SkillItem[];    // キャッチアップ中 / 検証中
 }
 
+export interface CareerInitiative {
+  title: string;
+  challenge: string;
+  action: string;
+  result: string;
+}
+
 export interface CareerItem {
+  id?: string;
   period: string;
   company: string;
   department: string;
   title: string;
   summary: string;
+  isCurrent?: boolean;
+  isLearning?: boolean;
   highlightAchievements: string[];
+  initiative?: CareerInitiative;
+}
+
+export interface StrengthPillar {
+  title: string;
+  description: string;
 }
 
 export interface ProfileData {
@@ -46,6 +62,7 @@ export interface ProfileData {
   catchphrase: string;
   experienceYears: number;
   keywords: string[];
+  qualificationsSummary?: string;
   links: {
     github?: string;
     linkedin?: string;
@@ -76,6 +93,7 @@ export interface ProfileData {
     values: number[]; // 0 - 100
   };
   skills: SkillStackGroup;
+  strengths?: StrengthPillar[];
   projects: ProjectStar[];
   career: CareerItem[];
 }

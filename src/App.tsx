@@ -10,7 +10,7 @@ import { EditProfileModal } from './components/EditProfileModal';
 
 export default function App() {
   const [profile, setProfile] = useState<ProfileData>(() => {
-    const savedCustom = localStorage.getItem('interview_portfolio_custom_data_v7');
+    const savedCustom = localStorage.getItem('interview_portfolio_custom_data_v11');
     if (savedCustom) {
       try {
         return JSON.parse(savedCustom);
@@ -65,11 +65,11 @@ export default function App() {
 
   const handleSaveCustomProfile = (updatedProfile: ProfileData) => {
     setProfile(updatedProfile);
-    localStorage.setItem('interview_portfolio_custom_data_v7', JSON.stringify(updatedProfile));
+    localStorage.setItem('interview_portfolio_custom_data_v11', JSON.stringify(updatedProfile));
   };
 
   const handleResetProfile = () => {
-    localStorage.removeItem('interview_portfolio_custom_data_v7');
+    localStorage.removeItem('interview_portfolio_custom_data_v11');
     const basePreset = PRESET_PROFILES.backend;
     setProfile(basePreset);
     setIsEditModalOpen(false);
@@ -94,7 +94,7 @@ export default function App() {
         {activeTab === 'experience' && (
           <div className="animate-in fade-in duration-200 space-y-10">
             <Hero profile={profile} />
-            <ExperienceSection />
+            <ExperienceSection career={profile.career} />
           </div>
         )}
 
@@ -104,6 +104,7 @@ export default function App() {
             <SkillsSection
               radar={profile.radar}
               skills={profile.skills}
+              strengths={profile.strengths}
               isDark={isDark}
             />
           </div>
